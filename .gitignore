@@ -1,4 +1,4 @@
-*.local.properties
+*-local.properties
 
 HELP.md
 target/

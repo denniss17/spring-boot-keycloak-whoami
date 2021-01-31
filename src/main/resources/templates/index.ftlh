@@ -1,0 +1,42 @@
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<h2>Profile</h2>
+<table>
+    <tr>
+        <th>Subject</th>
+        <td>${token.getSubject()}</td>
+    </tr>
+    <tr>
+        <th>Name</th>
+        <td>${token.name}</td>
+    </tr>
+    <tr>
+        <th>e-mail</th>
+        <td>${token.email}</td>
+    </tr>
+    <tr>
+        <th>Preferred username</th>
+        <td>${token.preferredUsername}</td>
+    </tr>
+</table>
+<h2>Scope</h2>
+${token.scope}
+<h2>Authorities</h2>
+<ul>
+<#list authorities as authority>
+    <li>${authority.authority}</li>
+</#list>
+</ul>
+<h2>Groups</h2>
+<ul>
+    <#list token.otherClaims.groups as group>
+        <li>${group}</li>
+    </#list>
+</ul>
+<h2>Token</h2>
+<pre>${tokenJson}</pre>
+</body>
+</html>

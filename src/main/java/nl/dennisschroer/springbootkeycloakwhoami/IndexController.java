@@ -1,12 +1,16 @@
 package nl.dennisschroer.springbootkeycloakwhoami;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Dennis Schroer
@@ -15,12 +19,16 @@ import java.security.Principal;
 @Controller
 public class IndexController {
     @GetMapping("/")
-    @ResponseBody
-    public Object index(Principal principal){
+    public ModelAndView index(Principal principal) throws JsonProcessingException {
         KeycloakAuthenticationToken keycloakAuthenticationToken = (KeycloakAuthenticationToken) principal;
-
         AccessToken token = keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext().getToken();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        return token;
+        Map<String, Object> model = new HashMap<>();
+        model.put("authorities", keycloakAuthenticationToken.getAuthorities());
+        model.put("token", token);
+        model.put("tokenJson", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(token));
+
+        return new ModelAndView("index", model);
     }
 }
