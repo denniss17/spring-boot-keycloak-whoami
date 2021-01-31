@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +20,10 @@ import java.util.Map;
  */
 @Controller
 public class IndexController {
+
+    @Value("${keycloak.resource}")
+    private String resource;
+
     @GetMapping("/")
     public ModelAndView index(Principal principal) throws JsonProcessingException {
         KeycloakAuthenticationToken keycloakAuthenticationToken = (KeycloakAuthenticationToken) principal;
@@ -28,6 +34,8 @@ public class IndexController {
         model.put("authorities", keycloakAuthenticationToken.getAuthorities());
         model.put("token", token);
         model.put("tokenJson", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(token));
+        model.put("realmRoles", new ArrayList<>(token.getRealmAccess().getRoles()));
+        model.put("clientRoles", new ArrayList<>(token.getResourceAccess().get(resource).getRoles()));
 
         return new ModelAndView("index", model);
     }
